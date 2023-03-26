@@ -1,4 +1,7 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.InputMismatchException;
@@ -10,6 +13,7 @@ public class OptionMenu {
 	Scanner menuInput = new Scanner(System.in);
 	DecimalFormat moneyFormat = new DecimalFormat("'$'###,##0.00");
 	HashMap<Integer, Account> data = new HashMap<Integer, Account>();
+
 
 	public void getLogin() throws IOException {
 		boolean end = false;
@@ -47,23 +51,31 @@ public class OptionMenu {
 				System.out.println("\nSelect the account you want to access: ");
 				System.out.println(" Type 1 - Checking Account");
 				System.out.println(" Type 2 - Savings Account");
-				System.out.println(" Type 3 - Exit");
+				System.out.println(" Type 3 - View Checking and Savings Account Balance");
+				System.out.println(" Type 4 - View Log");
+				System.out.println(" Type 5 - Exit");
 				System.out.print("\nChoice: ");
 
 				int selection = menuInput.nextInt();
 
 				switch (selection) {
-				case 1:
-					getChecking(acc);
-					break;
-				case 2:
-					getSaving(acc);
-					break;
-				case 3:
-					end = true;
-					break;
-				default:
-					System.out.println("\nInvalid Choice.");
+					case 1:
+						getChecking(acc);
+						break;
+					case 2:
+						getSaving(acc);
+						break;
+					case 3:
+						System.out.println("Checking Account Balance: " + moneyFormat.format(acc.getCheckingBalance()));
+						System.out.println("Checking Savings Balance: " + moneyFormat.format(acc.getSavingBalance()));
+						getAccountType(acc);
+					case 4:
+						printHistory(acc);
+					case 5:
+						end = true;
+						break;
+					default:
+						System.out.println("\nInvalid Choice.");
 				}
 			} catch (InputMismatchException e) {
 				System.out.println("\nInvalid Choice.");
@@ -87,24 +99,24 @@ public class OptionMenu {
 				int selection = menuInput.nextInt();
 
 				switch (selection) {
-				case 1:
-					System.out.println("\nChecking Account Balance: " + moneyFormat.format(acc.getCheckingBalance()));
-					break;
-				case 2:
-					acc.getCheckingWithdrawInput();
-					break;
-				case 3:
-					acc.getCheckingDepositInput();
-					break;
+					case 1:
+						System.out.println("\nChecking Account Balance: " + moneyFormat.format(acc.getCheckingBalance()));
+						break;
+					case 2:
+						acc.getCheckingWithdrawInput();
+						break;
+					case 3:
+						acc.getCheckingDepositInput();
+						break;
 
-				case 4:
-					acc.getTransferInput("Checking");
-					break;
-				case 5:
-					end = true;
-					break;
-				default:
-					System.out.println("\nInvalid Choice.");
+					case 4:
+						acc.getTransferInput("Checking");
+						break;
+					case 5:
+						end = true;
+						break;
+					default:
+						System.out.println("\nInvalid Choice.");
 				}
 			} catch (InputMismatchException e) {
 				System.out.println("\nInvalid Choice.");
@@ -126,23 +138,23 @@ public class OptionMenu {
 				System.out.print("Choice: ");
 				int selection = menuInput.nextInt();
 				switch (selection) {
-				case 1:
-					System.out.println("\nSavings Account Balance: " + moneyFormat.format(acc.getSavingBalance()));
-					break;
-				case 2:
-					acc.getsavingWithdrawInput();
-					break;
-				case 3:
-					acc.getSavingDepositInput();
-					break;
-				case 4:
-					acc.getTransferInput("Savings");
-					break;
-				case 5:
-					end = true;
-					break;
-				default:
-					System.out.println("\nInvalid Choice.");
+					case 1:
+						System.out.println("\nSavings Account Balance: " + moneyFormat.format(acc.getSavingBalance()));
+						break;
+					case 2:
+						acc.getsavingWithdrawInput();
+						break;
+					case 3:
+						acc.getSavingDepositInput();
+						break;
+					case 4:
+						acc.getTransferInput("Savings");
+						break;
+					case 5:
+						end = true;
+						break;
+					default:
+						System.out.println("\nInvalid Choice.");
 				}
 			} catch (InputMismatchException e) {
 				System.out.println("\nInvalid Choice.");
@@ -182,8 +194,8 @@ public class OptionMenu {
 	}
 
 	public void mainMenu() throws IOException {
-		data.put(952141, new Account(952141, 191904, 1000, 5000));
-		data.put(123, new Account(123, 123, 20000, 50000));
+
+		read();
 		boolean end = false;
 		while (!end) {
 			try {
@@ -192,16 +204,16 @@ public class OptionMenu {
 				System.out.print("\nChoice: ");
 				int choice = menuInput.nextInt();
 				switch (choice) {
-				case 1:
-					getLogin();
-					end = true;
-					break;
-				case 2:
-					createAccount();
-					end = true;
-					break;
-				default:
-					System.out.println("\nInvalid Choice.");
+					case 1:
+						getLogin();
+						end = true;
+						break;
+					case 2:
+						createAccount();
+						end = true;
+						break;
+					default:
+						System.out.println("\nInvalid Choice.");
 				}
 			} catch (InputMismatchException e) {
 				System.out.println("\nInvalid Choice.");
@@ -209,7 +221,63 @@ public class OptionMenu {
 			}
 		}
 		System.out.println("\nThank You for using this ATM.\n");
+		quit();
 		menuInput.close();
+	}
+	public void printHistory(Account account) {
+		try {
+			String pizza = "";
+			File file = new File("log.txt");
+			Scanner scan = new Scanner(file);
+			while (scan.hasNext()) {
+				pizza = scan.nextLine();
+				if (Integer.parseInt(pizza.split(":")[0]) == account.getCustomerNumber()) {
+					System.out.println(pizza);
+				}
+			}
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+
+	public void quit() {
+		try {
+			Iterator<Map.Entry<Integer, Account>> iterator = data.entrySet().iterator();
+			File file = new File("hiep3.txt");
+			PrintStream writer = new PrintStream(file);
+			while (iterator.hasNext()) {
+				if (file != null) {
+					Map.Entry<Integer, Account> entry = iterator.next();
+					writer.println("" + entry.getKey() + "," + entry.getValue());
+				}
+			}
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		}
 		System.exit(0);
 	}
-}
+
+	public void read() throws FileNotFoundException {
+		Scanner read = new Scanner(new File("hiep3.txt"));
+		String[] line;
+
+		Integer username;
+		Integer password;
+		Double cbalance = 0.0;
+		Double sbalance = 0.0;
+
+		while(read.hasNext()) {
+			line = read.next().split(",");
+
+			username = Integer.parseInt(line[0]);
+			password = Integer.parseInt(line[2]);
+			cbalance = Double.parseDouble(line[3]);
+			sbalance = Double.parseDouble(line[4]);
+
+			Account account = new Account(username, password, cbalance, sbalance);
+			data.put(username, account);
+			}
+		}
+	}
+

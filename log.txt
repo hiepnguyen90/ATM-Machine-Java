@@ -1,0 +1,10 @@
+1234: Sat Mar 25 20:43:54 EDT 2023 - You deposited into checking $5,000.00
+1234: Sat Mar 25 20:48:41 EDT 2023 - You deposited into checking $1,200.00
+1234: Sat Mar 25 20:48:45 EDT 2023 - You withdrew from checking $1,000.00
+1234: Sat Mar 25 20:48:51 EDT 2023 - You made a transfer from Checking to Savings $2,000.00
+1234: Sat Mar 25 20:53:10 EDT 2023 - You withdrew from checking $100.00
+1234: Sat Mar 25 20:53:13 EDT 2023 - You deposited into checking $150.00
+1234: Sat Mar 25 20:53:21 EDT 2023 - You withdrew from savings $120.00
+1234: Sat Mar 25 20:53:26 EDT 2023: - You deposited into saving $120.00
+1234: Sat Mar 25 20:53:34 EDT 2023 - You made a transfer from Savings to Checking $120.00
+1234: Sat Mar 25 20:53:49 EDT 2023 - You made a transfer from Checking to Savings $120.00
